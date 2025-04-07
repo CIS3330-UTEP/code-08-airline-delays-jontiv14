@@ -3,7 +3,6 @@ import matplotlib.pyplot as plt
 import seaborn as sns
 import statsmodels.api as sm
 import statsmodels.formula.api as sm_api
-from statsmodels.stats.multicomp import pairwise_tukeyhsd
 
 # descriptive analytics
 filename = 'Flight_Delays_2018.csv'
@@ -26,8 +25,13 @@ airlines = ['American Airlines Inc.', 'Delta Air Lines Inc.', 'United Air Lines 
 df = df.query("OP_CARRIER_NAME == @airlines")
 
 model = sm_api.ols('ARR_DELAY ~ (DEP_DELAY)', data = df).fit()
+print(model.summary())
 anova_table = sm.stats.anova_lm(model,typ=2)
 print(anova_table)
 
-tukey_results = pairwise_tukeyhsd(endog=df ["ARR_DELAY"], groups=df["DEP_DELAY"], alpha =.05)
-print(tukey_results)
+# Scatterplot with regression line
+sns.lmplot(x='DEP_DELAY', y='ARR_DELAY', data=df, line_kws={"color": "red"})
+plt.title('OLS Regression')
+plt.xlabel('Departure Delay (minutes)')
+plt.ylabel('Arrival Delay (minutes)')
+plt.show()
